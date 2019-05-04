@@ -1,20 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Homepage{% endblock %}
+{% block stylesheets %}
+    <style type="text/css">
+        .news__list-item {
+            display: grid;
+            grid-template-columns: 130px auto 70px;
+            grid-template-rows: 30px 70px;
+            padding-bottom: 1.2em;
+        }
+        .news__list-item_thumbnail {
+            grid-row-start: 1;
+            grid-row-end: span 2;
+        }
+        .news__list-item_date-created {
+            color: #C9C9C9;
+            font-size: 14px;
+            grid-row-start: 1;
+        }
+        .news__list-item_title {
+            font-size: 28px;
+            grid-row-start: 2;
+        }
+        .news__list-item_delete-button {
+            grid-row-start: 1;
+            grid-row-end: span 2;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
-
-    <div class="example-wrapper">
-        <h1>{{ controller_name }} says "Hi!"</h1>
-
-        <ul>
-            <li>One</li>
-            <li>Two</li>
-            <li>Three</li>
-        </ul>
+    <div class="news">
+        <header class="news__header">News list</header>
+        {% for item in news %}
+            <section class="news__list-item">
+                <picture class="news__list-item_thumbnail">
+                    <img src="{{ item.thumbnail }}" alt="{{ item.title }}">
+                </picture>
+                <span class="news__list-item_date-created">{{ item.created | date("Y-m-d H:i:s") }}</span>
+                <span class="news__list-item_title"><a href="/news/{{ item.id }}">{{ item.title }}</a></span>
+                <button class="news__list-item_delete-button" data-id="{{ item.id }}">delete item</button>
+            </section>
+        {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function(){
+            Array.from(document.getElementsByClassName('news__list-item_delete-button')).forEach(function(button){
+                button.addEventListener('click', function(event){
+                    let clickedItemId = event.target.getAttribute('data-id');
+
+                    if (confirm('You are about to delete the news with ID = ' + clickedItemId)) {
+                        fetch('/news/delete/' + clickedItemId, {cache: 'no-store'}).then(function(response){
+                            if (response.status !== 200) {
+                                alert(response.statusText);
+                                return;
+                            }
+
+                            location.reload();
+                        }).catch(function(error){
+                            alert(error);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
