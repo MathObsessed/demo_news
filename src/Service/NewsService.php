@@ -2,10 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\News;
 use App\Exception\NewsNotFound;
 use App\Repository\NewsRepository;
 
-class News {
+class NewsService {
     private $repository;
 
     public function __construct(NewsRepository $repository) {
@@ -13,13 +14,24 @@ class News {
     }
 
     /**
-     * @return \App\Entity\News[]
+     * @return News[]
      */
-    public function fetchAll():array {
+    public function findAll():array {
         return $this->repository->findAll();
     }
 
-    public function fetchById(int $id) {
-        return $this->repository->find($id);
+    /**
+     * @param int $id
+     * @return News
+     * @throws NewsNotFound
+     */
+    public function findById(int $id):News {
+        $item = $this->repository->find($id);
+
+        if (empty($item)) {
+            throw new NewsNotFound($id);
+        }
+
+        return $item;
     }
 }
