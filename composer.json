@@ -10,11 +10,16 @@
         "symfony/dotenv": "4.2.*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "4.2.*",
+        "symfony/monolog-bundle": "^3.0",
         "symfony/twig-bundle": "4.2.*",
         "symfony/yaml": "4.2.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.11"
+        "easycorp/easy-log-handler": "^1.0.7",
+        "symfony/debug-bundle": "*",
+        "symfony/maker-bundle": "^1.11",
+        "symfony/profiler-pack": "*",
+        "symfony/var-dumper": "*"
     },
     "config": {
         "preferred-install": {
