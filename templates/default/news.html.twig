@@ -27,9 +27,9 @@
 
 {% block body %}
     <div class="news">
-        <header class="news__header"><a href="/">Back to list</a></header>
+        <header class="news__header"><a href="{{ path('get_all_news') }}">Back to list</a></header>
         <section class="news__item">
-            <div class="news__item_date-created">{{ item.created | date("Y-m-d H:i:s") }}</div>
+            <div class="news__item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</div>
             <div class="news__item_title">{{ item.title }}</div>
             <picture class="news__item_image">
                 <img src="{{ item.image }}" alt="{{ item.title }}">

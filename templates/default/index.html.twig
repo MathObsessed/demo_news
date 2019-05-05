@@ -31,12 +31,12 @@
 {% block body %}
     <div class="news">
         <header class="news__header">News list</header>
-        {% for item in news %}
+        {% for item in items %}
             <section class="news__list-item">
                 <picture class="news__list-item_thumbnail">
                     <img src="{{ item.thumbnail }}" alt="{{ item.title }}">
                 </picture>
-                <span class="news__list-item_date-created">{{ item.created | date("Y-m-d H:i:s") }}</span>
+                <span class="news__list-item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</span>
                 <span class="news__list-item_title"><a href="/news/{{ item.id }}">{{ item.title }}</a></span>
                 <button class="news__list-item_delete-button" data-id="{{ item.id }}">delete item</button>
             </section>
@@ -52,7 +52,10 @@
                     let clickedItemId = event.target.getAttribute('data-id');
 
                     if (confirm('You are about to delete the news with ID = ' + clickedItemId)) {
-                        fetch('/news/delete/' + clickedItemId, {cache: 'no-store'}).then(function(response){
+                        fetch('/news/delete/' + clickedItemId, {
+                            method: 'DELETE',
+                            cache: 'no-store'
+                        }).then(function(response){
                             if (response.status !== 200) {
                                 alert(response.statusText);
                                 return;

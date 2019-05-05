@@ -45,7 +45,6 @@ class NewsService {
     public function deleteById(int $id):void {
         $item = $this->findById($id);
 
-        //TODO: Add soft delete!
         $this->entityManager->remove($item);
         $this->entityManager->flush();
     }
