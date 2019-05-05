@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        form {
+            font-size: 14px;
+            margin: 0 auto;
+            width: 400px;
+        }
+        form label {
+            color: #C9C9C9;
+        }
+        form button,
+        form input,
+        form label,
+        form textarea {
+            float: left;
+            clear: both;
+        }
+        form button,
+        form input,
+        form textarea {
+            border: 2px solid #C9C9C9;
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: inline-block;
+            margin: 10px 0;
+            outline: none;
+            padding: 10px 5px;
+            transition: 0.2s ease all;
+            width: 100%;
+        }
+        form input[type="text"]:focus {
+            border-color: #6495ED;
+        }
+        form button[type="submit"] {
+            background-color: #6495ED;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: inline-block;
+            padding: 15px 50px;
+            transition: 0.2s ease all;
+            width: auto;
+            float: right;
+            clear: right;
+        }
+        form button[type="submit"]:hover {
+            opacity: 0.8;
+        }
+        form button[type="submit"]:active {
+            opacity: 0.4;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="news">
+        <header class="news__header">
+            <a class="news__header_homepage-link" href="{{ path('get_all_news') }}">Back to list</a>
+        </header>
+        <section>
+            <form id="news_form">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" tabindex="1" required autofocus>
+
+                <label for="thumbnail">Thumbnail image (130x100):</label>
+                <input type="file" id="thumbnail" name="thumbnail" tabindex="2" required>
+
+                <label for="image">Main image (800xN):</label>
+                <input type="file" id="image" name="image" tabindex="3" required>
+
+                <label for="url">URL:</label>
+                <input type="text" id="url" name="url" tabindex="4" required>
+
+                <label for="text">Text:</label>
+                <textarea id="text" name="text" tabindex="5" required></textarea>
+
+                <button type="submit" tabindex="6">create</button>
+            </form>
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        document.getElementById('news_form').addEventListener('submit', function(event){
+            event.preventDefault();
+
+            fetch('/news', {
+                body: new FormData(event.target),
+                cache: 'no-store',
+                method: 'POST'
+            }).then(function(response){
+                if (response.status !== 200) {
+                    alert(response.statusText);
+                    return;
+                }
+
+                location.href = '{{ path('get_all_news') }}';
+            }).catch(function(error){
+                alert(error);
+            });
+        });
+    </script>
+{% endblock %}

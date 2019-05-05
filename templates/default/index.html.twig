@@ -2,6 +2,10 @@
 
 {% block stylesheets %}
     <style type="text/css">
+        .news__header_create-link {
+            position: absolute;
+            right: 0;
+        }
         .news__list-item {
             display: grid;
             grid-template-columns: 130px auto 70px;
@@ -30,7 +34,10 @@
 
 {% block body %}
     <div class="news">
-        <header class="news__header">News list</header>
+        <header class="news__header">
+            <span class="news__header_title">News list</span>
+            <a class="news__header_create-link" href="{{ path('news_form') }}">Create new</a>
+        </header>
         {% for item in items %}
             <section class="news__list-item">
                 <picture class="news__list-item_thumbnail">
@@ -52,9 +59,9 @@
                     let clickedItemId = event.target.getAttribute('data-id');
 
                     if (confirm('You are about to delete the news with ID = ' + clickedItemId)) {
-                        fetch('/news/delete/' + clickedItemId, {
-                            method: 'DELETE',
-                            cache: 'no-store'
+                        fetch('/news/' + clickedItemId, {
+                            cache: 'no-store',
+                            method: 'DELETE'
                         }).then(function(response){
                             if (response.status !== 200) {
                                 alert(response.statusText);
