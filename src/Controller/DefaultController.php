@@ -44,7 +44,7 @@ class DefaultController extends AbstractController {
             throw $this->createNotFoundException($e->getMessage());
         }
 
-        return $this->render('default/news.html.twig', ['item' => $item]);
+        return $this->render('default/item.html.twig', ['item' => $item]);
     }
 
     /**
