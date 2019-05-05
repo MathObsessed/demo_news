@@ -5,11 +5,14 @@ namespace App\Service;
 use App\Entity\News;
 use App\Exception\NewsNotFound;
 use App\Repository\NewsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class NewsService {
+    private $entityManager;
     private $repository;
 
-    public function __construct(NewsRepository $repository) {
+    public function __construct(EntityManagerInterface $entityManager, NewsRepository $repository) {
+        $this->entityManager = $entityManager;
         $this->repository = $repository;
     }
 
@@ -33,5 +36,17 @@ class NewsService {
         }
 
         return $item;
+    }
+
+    /**
+     * @param int $id
+     * @throws NewsNotFound
+     */
+    public function deleteById(int $id):void {
+        $item = $this->findById($id);
+
+        //TODO: Add soft delete!
+        $this->entityManager->remove($item);
+        $this->entityManager->flush();
     }
 }
