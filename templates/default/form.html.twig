@@ -24,6 +24,8 @@
             border-radius: 3px;
             box-sizing: border-box;
             display: inline-block;
+            font-family: inherit;
+            font-size: inherit;
             margin: 10px 0;
             outline: none;
             padding: 10px 5px;
@@ -61,20 +63,20 @@
         </header>
         <section>
             <form id="news_form">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" tabindex="1" required autofocus>
+                <label for="news_title">Title:</label>
+                <input id="news_title" name="news[title]" type="text" tabindex="1" required autofocus>
 
-                <label for="thumbnail">Thumbnail image (130x100):</label>
-                <input type="file" id="thumbnail" name="thumbnail" tabindex="2" required>
+                <label for="news_thumbnail">Thumbnail image (130x100):</label>
+                <input id="news_thumbnail" name="news[thumbnail]" type="file" tabindex="2" required>
 
-                <label for="image">Main image (800xN):</label>
-                <input type="file" id="image" name="image" tabindex="3" required>
+                <label for="news_image">Main image (800xN):</label>
+                <input id="news_image" name="news[image]" type="file" tabindex="3" required>
 
-                <label for="url">URL:</label>
-                <input type="text" id="url" name="url" tabindex="4" required>
+                <label for="news_url">URL:</label>
+                <input id="news_url" name="news[url]" type="text" tabindex="4" required>
 
-                <label for="text">Text:</label>
-                <textarea id="text" name="text" tabindex="5" required></textarea>
+                <label for="news_text">Text:</label>
+                <textarea id="news_text" name="news[text]" tabindex="5" required></textarea>
 
                 <button type="submit" tabindex="6">create</button>
             </form>
