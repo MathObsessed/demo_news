@@ -23,6 +23,7 @@ class News {
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
      */
     private $created;
 
