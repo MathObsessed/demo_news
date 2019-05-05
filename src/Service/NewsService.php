@@ -12,6 +12,8 @@ class NewsService {
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager, NewsRepository $repository) {
+        $entityManager->getFilters()->enable('soft_deleteable');
+
         $this->entityManager = $entityManager;
         $this->repository = $repository;
     }
