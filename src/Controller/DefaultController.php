@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Exception\NewsNotFound;
+use App\Form\NewsType;
 use App\Service\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -65,11 +67,40 @@ class DefaultController extends AbstractController {
      * @Route("/news", methods={"POST"}, name="post_news")
      */
     public function newsPost(Request $request) {
-        //TODO: Implement logic!
+        $now = new \DateTimeImmutable();
 
-        dump($request->files);
-        dump($request->request);
+        $form = $this->createForm(NewsType::class, null, [
+            NewsType::CREATED => $now
+        ]);
 
-        return new Response('', Response::HTTP_OK);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            //TODO: create logic
+
+            return new Response('', Response::HTTP_OK);
+        }
+
+        return $this->json($this->extractErrorsFromForm($form), Response::HTTP_BAD_REQUEST);
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private function extractErrorsFromForm(FormInterface $form):array {
+        $errors = [];
+
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        foreach ($form->all() as $childForm) {
+            if ($childForm instanceof FormInterface) {
+                if ($childErrors = $this->extractErrorsFromForm($childForm)) {
+                    $errors[$childForm->getName()] = $childErrors;
+                }
+            }
+        }
+
+        return $errors;
     }
 }
