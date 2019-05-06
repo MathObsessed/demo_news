@@ -50,4 +50,12 @@ class NewsService {
         $this->entityManager->remove($item);
         $this->entityManager->flush();
     }
+
+    /**
+     * @param News $item
+     */
+    public function persist(News $item):void {
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+    }
 }
