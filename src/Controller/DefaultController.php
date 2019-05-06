@@ -7,6 +7,7 @@ use App\Form\NewsType;
 use App\Service\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -76,7 +77,16 @@ class DefaultController extends AbstractController {
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            //TODO: create logic
+            $item = $form->getData();
+
+            $item->setThumbnail(
+                $this->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData())
+            );
+            $item->setImage(
+                $this->moveUploadedImage($form->get(NewsType::IMAGE)->getData())
+            );
+
+            $this->newsService->persist($item);
 
             return new Response('', Response::HTTP_OK);
         }
@@ -102,5 +112,13 @@ class DefaultController extends AbstractController {
         }
 
         return $errors;
+    }
+
+    private function moveUploadedImage(UploadedFile $file):string {
+        $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+        $file->move($this->getParameter('images_upload_directory'), $fileName);
+
+        return $this->getParameter('images_directory').$fileName;
     }
 }
