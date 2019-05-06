@@ -6,19 +6,21 @@ use App\Entity\News;
 use App\Exception\NewsNotFound;
 use App\Form\NewsType;
 use App\Service\NewsService;
+use App\Service\UploadService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController {
     private $newsService;
+    private $uploadService;
 
-    public function __construct(NewsService $newsService) {
+    public function __construct(NewsService $newsService, UploadService $uploadService) {
         $this->newsService = $newsService;
+        $this->uploadService = $uploadService;
     }
 
     /**
@@ -28,7 +30,9 @@ class DefaultController extends AbstractController {
     public function index() {
         $items = $this->newsService->findAll();
 
-        return $this->render('default/index.html.twig', ['items' => $items]);
+        return $this->render('default/index.html.twig', [
+            'items' => $items
+        ]);
     }
 
     /**
@@ -47,7 +51,9 @@ class DefaultController extends AbstractController {
             }
         }
 
-        return $this->render('default/form.html.twig', ['item' => $item]);
+        return $this->render('default/form.html.twig', [
+            'item' => $item
+        ]);
     }
 
     /**
@@ -61,7 +67,9 @@ class DefaultController extends AbstractController {
             throw $this->createNotFoundException($e->getMessage());
         }
 
-        return $this->render('default/item.html.twig', ['item' => $item]);
+        return $this->render('default/item.html.twig', [
+            'item' => $item
+        ]);
     }
 
     /**
@@ -93,8 +101,8 @@ class DefaultController extends AbstractController {
             $item = $form->getData();
 
             $item->setCreated($now);
-            $item->setThumbnail($this->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData()));
-            $item->setImage($this->moveUploadedImage($form->get(NewsType::IMAGE)->getData()));
+            $item->setThumbnail($this->uploadService->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData()));
+            $item->setImage($this->uploadService->moveUploadedImage($form->get(NewsType::IMAGE)->getData()));
 
             $this->newsService->persist($item);
 
@@ -127,10 +135,10 @@ class DefaultController extends AbstractController {
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($uploadedThumbnail = $form->get(NewsType::THUMBNAIL)->getData()) {
-                $thumbnailValue = $this->moveUploadedImage($uploadedThumbnail);
+                $thumbnailValue = $this->uploadService->moveUploadedImage($uploadedThumbnail);
             }
             if ($uploadedImage = $form->get(NewsType::IMAGE)->getData()) {
-                $imageValue = $this->moveUploadedImage($uploadedImage);
+                $imageValue = $this->uploadService->moveUploadedImage($uploadedImage);
             }
 
             $item->setThumbnail($thumbnailValue);
@@ -162,13 +170,5 @@ class DefaultController extends AbstractController {
         }
 
         return $errors;
-    }
-
-    private function moveUploadedImage(UploadedFile $file):string {
-        $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-        $file->move($this->getParameter('web_root_dir').$this->getParameter('images_directory'), $fileName);
-
-        return $this->getParameter('images_directory').DIRECTORY_SEPARATOR.$fileName;
     }
 }
