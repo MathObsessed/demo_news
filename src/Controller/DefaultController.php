@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\News;
 use App\Exception\NewsNotFound;
 use App\Form\NewsType;
 use App\Service\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,21 +84,57 @@ class DefaultController extends AbstractController {
     public function newsPost(Request $request) {
         $now = new \DateTimeImmutable();
 
-        $form = $this->createForm(NewsType::class, null, [
-            NewsType::CREATED => $now
-        ]);
+        $form = $this->createForm(NewsType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var News $item */
             $item = $form->getData();
 
-            $item->setThumbnail(
-                $this->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData())
-            );
-            $item->setImage(
-                $this->moveUploadedImage($form->get(NewsType::IMAGE)->getData())
-            );
+            $item->setCreated($now);
+            $item->setThumbnail($this->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData()));
+            $item->setImage($this->moveUploadedImage($form->get(NewsType::IMAGE)->getData()));
+
+            $this->newsService->persist($item);
+
+            return new Response('', Response::HTTP_OK);
+        }
+
+        return $this->json($this->extractErrorsFromForm($form), Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Route("/news/{id<\d+>}", methods={"POST"}, name="put_news_by_id")
+     */
+    public function newsPut(Request $request, $id) {
+        try {
+            $item = $this->newsService->findById($id);
+
+            $thumbnailValue = $item->getThumbnail();
+            $imageValue = $item->getImage();
+
+            $item->setThumbnail(new File($this->getParameter('web_root_dir').$thumbnailValue));
+            $item->setImage(new File($this->getParameter('web_root_dir').$imageValue));
+        }
+        catch (NewsNotFound $e) {
+            throw $this->createNotFoundException($e->getMessage());
+        }
+
+        $form = $this->createForm(NewsType::class, $item);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($uploadedThumbnail = $form->get(NewsType::THUMBNAIL)->getData()) {
+                $thumbnailValue = $this->moveUploadedImage($uploadedThumbnail);
+            }
+            if ($uploadedImage = $form->get(NewsType::IMAGE)->getData()) {
+                $imageValue = $this->moveUploadedImage($uploadedImage);
+            }
+
+            $item->setThumbnail($thumbnailValue);
+            $item->setImage($imageValue);
 
             $this->newsService->persist($item);
 
@@ -129,8 +167,8 @@ class DefaultController extends AbstractController {
     private function moveUploadedImage(UploadedFile $file):string {
         $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
-        $file->move($this->getParameter('images_upload_directory'), $fileName);
+        $file->move($this->getParameter('web_root_dir').$this->getParameter('images_directory'), $fileName);
 
-        return $this->getParameter('images_directory').$fileName;
+        return $this->getParameter('images_directory').DIRECTORY_SEPARATOR.$fileName;
     }
 }
