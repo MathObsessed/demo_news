@@ -15,15 +15,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NewsType extends AbstractType {
     const CREATED = 'created';
+    const THUMBNAIL = 'thumbnail';
+    const IMAGE = 'image';
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $created = $options[self::CREATED];
 
         $builder
-            ->add('created', TextType::class)
+            ->add(self::CREATED, TextType::class)
             ->add('title', TextType::class)
-            ->add('thumbnail', FileType::class)
-            ->add('image', FileType::class)
+            ->add(self::THUMBNAIL, FileType::class)
+            ->add(self::IMAGE, FileType::class)
             ->add('url', UrlType::class)
             ->add('text', TextareaType::class)
             ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($created) {
