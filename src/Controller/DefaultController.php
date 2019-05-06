@@ -5,13 +5,12 @@ namespace App\Controller;
 use App\Entity\News;
 use App\Exception\NewsNotFound;
 use App\Form\NewsType;
+use App\Service\AssetService;
 use App\Service\NewsService;
-use App\Service\UploadService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,11 +18,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController {
     private $newsService;
-    private $uploadService;
+    private $assetService;
 
-    public function __construct(NewsService $newsService, UploadService $uploadService) {
+    public function __construct(NewsService $newsService, AssetService $assetService) {
         $this->newsService = $newsService;
-        $this->uploadService = $uploadService;
+        $this->assetService = $assetService;
     }
 
     /**
@@ -79,22 +78,18 @@ class DefaultController extends AbstractController {
      * @Route("/assets/{fileName}", name="fetch_asset")
      */
     public function fetchAsset($fileName) {
-        $path = $this->getParameter('kernel.project_dir').'/assets/'.$fileName;
-
         BinaryFileResponse::trustXSendfileTypeHeader();
 
         try {
-            $response = new BinaryFileResponse($path);
+            $response = new BinaryFileResponse($this->assetService->filePathByName($fileName));
+            $fileMimeType = $this->assetService->fileByName($fileName)->getMimeType();
         }
         catch (FileNotFoundException $e) {
             throw $this->createNotFoundException();
         }
 
-        $file = new File($path);
-        $response->headers->set('Content-Type', $file->getMimeType());
-
-        $disposition = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $fileName);
-        $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', $fileMimeType);
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $fileName));
 
         return $response;
     }
@@ -128,8 +123,8 @@ class DefaultController extends AbstractController {
             $item = $form->getData();
 
             $item->setCreated($now);
-            $item->setThumbnail($this->uploadService->moveUploadedImage($form->get(NewsType::THUMBNAIL)->getData()));
-            $item->setImage($this->uploadService->moveUploadedImage($form->get(NewsType::IMAGE)->getData()));
+            $item->setThumbnail($this->assetService->handleUpload($form->get(NewsType::THUMBNAIL)->getData()));
+            $item->setImage($this->assetService->handleUpload($form->get(NewsType::IMAGE)->getData()));
 
             $this->newsService->persist($item);
 
@@ -149,8 +144,8 @@ class DefaultController extends AbstractController {
             $thumbnailValue = $item->getThumbnail();
             $imageValue = $item->getImage();
 
-            $item->setThumbnail(new File($this->getParameter('web_root_dir').$thumbnailValue));
-            $item->setImage(new File($this->getParameter('web_root_dir').$imageValue));
+            $item->setThumbnail($this->assetService->fileByName($thumbnailValue));
+            $item->setImage($this->assetService->fileByName($imageValue));
         }
         catch (NewsNotFound $e) {
             throw $this->createNotFoundException($e->getMessage());
@@ -162,10 +157,10 @@ class DefaultController extends AbstractController {
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($uploadedThumbnail = $form->get(NewsType::THUMBNAIL)->getData()) {
-                $thumbnailValue = $this->uploadService->moveUploadedImage($uploadedThumbnail);
+                $thumbnailValue = $this->assetService->handleUpload($uploadedThumbnail);
             }
             if ($uploadedImage = $form->get(NewsType::IMAGE)->getData()) {
-                $imageValue = $this->uploadService->moveUploadedImage($uploadedImage);
+                $imageValue = $this->assetService->handleUpload($uploadedImage);
             }
 
             $item->setThumbnail($thumbnailValue);

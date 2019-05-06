@@ -36,7 +36,7 @@
             <div class="news__item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</div>
             <div class="news__item_title">{{ item.title }}</div>
             <picture class="news__item_image">
-                <img src="{{ item.image }}" alt="{{ item.title }}">
+                <img src="{{ item.image | asset }}" alt="{{ item.title }}">
             </picture>
             <div class="news__item_url">From: <a target="_blank" href="{{ item.url }}">{{ item.url }}</a></div>
             <div class="news__item_text">{{ item.text | nl2br }}</div>

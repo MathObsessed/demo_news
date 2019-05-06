@@ -68,7 +68,7 @@
                 <label for="news_thumbnail" class="item-image-preview-container">
                     Thumbnail image (130x100):
                     {% if (item) %}
-                        <img src="{{ item.thumbnail }}" alt="{{ item.title }}" width="40">
+                        <img src="{{ item.thumbnail | asset }}" alt="{{ item.title }}" width="40">
                     {% endif %}
                 </label>
                 <input id="news_thumbnail" name="news[thumbnail]" type="file" class="upload-form-element" tabindex="2">
@@ -76,7 +76,7 @@
                 <label for="news_image" class="item-image-preview-container">
                     Main image (800xN):
                     {% if (item) %}
-                        <img src="{{ item.image }}" alt="{{ item.title }}" width="40">
+                        <img src="{{ item.image | asset }}" alt="{{ item.title }}" width="40">
                     {% endif %}
                 </label>
                 <input id="news_image" name="news[image]" type="file" class="upload-form-element" tabindex="3">
