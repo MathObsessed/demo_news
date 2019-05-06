@@ -9,7 +9,10 @@ use App\Service\NewsService;
 use App\Service\UploadService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -70,6 +73,30 @@ class DefaultController extends AbstractController {
         return $this->render('default/item.html.twig', [
             'item' => $item
         ]);
+    }
+
+    /**
+     * @Route("/assets/{fileName}", name="fetch_asset")
+     */
+    public function fetchAsset($fileName) {
+        $path = $this->getParameter('kernel.project_dir').'/assets/'.$fileName;
+
+        BinaryFileResponse::trustXSendfileTypeHeader();
+
+        try {
+            $response = new BinaryFileResponse($path);
+        }
+        catch (FileNotFoundException $e) {
+            throw $this->createNotFoundException();
+        }
+
+        $file = new File($path);
+        $response->headers->set('Content-Type', $file->getMimeType());
+
+        $disposition = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $fileName);
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     /**
