@@ -71,7 +71,7 @@
                         <img src="{{ item.thumbnail }}" alt="{{ item.title }}" width="40">
                     {% endif %}
                 </label>
-                <input id="news_thumbnail" name="news[thumbnail]" type="file" tabindex="2">
+                <input id="news_thumbnail" name="news[thumbnail]" type="file" class="upload-form-element" tabindex="2">
 
                 <label for="news_image" class="item-image-preview-container">
                     Main image (800xN):
@@ -79,7 +79,7 @@
                         <img src="{{ item.image }}" alt="{{ item.title }}" width="40">
                     {% endif %}
                 </label>
-                <input id="news_image" name="news[image]" type="file" tabindex="3">
+                <input id="news_image" name="news[image]" type="file" class="upload-form-element" tabindex="3">
 
                 <label for="news_url">URL:</label>
                 <input id="news_url" name="news[url]" type="text" value="{{ item ? item.url : '' }}" tabindex="4" required>
@@ -95,13 +95,21 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        document.getElementById('news_form').addEventListener('submit', function(event){
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function(){
+            Array.from(document.getElementsByClassName('upload-form-element')).forEach(function(element){
+                element.addEventListener('change', function(){
+                    let previewImage = document.querySelector('label[for="' + this.id + '"] > img');
 
-            {% if (item) %}
-                alert('call edit handler'); //TODO: implement!
-            {% else %}
-                fetch('/news', {
+                    if (previewImage) {
+                        previewImage.remove();
+                    }
+                });
+            });
+
+            document.getElementById('news_form').addEventListener('submit', function(event){
+                event.preventDefault();
+
+                fetch('/news{{ item ? '/' ~ item.id : '' }}', {
                     body: new FormData(event.target),
                     cache: 'no-store',
                     method: 'POST'
@@ -111,11 +119,11 @@
                         return;
                     }
 
-                    location.href = '{{ path('get_all_news') }}';
+                    location.href = '{{ item ? path('get_news_by_id', {'id': item.id}) : path('get_all_news') }}';
                 }).catch(function(error){
                     alert(error);
                 });
-            {% endif %}
+            });
         });
     </script>
 {% endblock %}
