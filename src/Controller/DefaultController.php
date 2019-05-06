@@ -33,8 +33,19 @@ class DefaultController extends AbstractController {
      * @Route("/form", name="news_form_create")
      * @Route("/form/{id<\d+>}", name="news_form_edit")
      */
-    public function newsForm() {
-        return $this->render('default/form.html.twig');
+    public function newsForm($id = '') {
+        $item = null;
+
+        if (!empty($id)) {
+            try {
+                $item = $this->newsService->findById($id);
+            }
+            catch (NewsNotFound $e) {
+                throw $this->createNotFoundException($e->getMessage());
+            }
+        }
+
+        return $this->render('default/form.html.twig', ['item' => $item]);
     }
 
     /**

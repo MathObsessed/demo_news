@@ -44,6 +44,14 @@
             float: right;
             clear: right;
         }
+        .item-image-preview-container {
+            position: relative;
+            width: 100%;
+        }
+        .item-image-preview-container > img {
+            position: absolute;
+            right: 0;
+        }
     </style>
 {% endblock %}
 
@@ -55,21 +63,31 @@
         <section>
             <form id="news_form">
                 <label for="news_title">Title:</label>
-                <input id="news_title" name="news[title]" type="text" tabindex="1" required autofocus>
+                <input id="news_title" name="news[title]" type="text" value="{{ item ? item.title : '' }}" tabindex="1" required autofocus>
 
-                <label for="news_thumbnail">Thumbnail image (130x100):</label>
-                <input id="news_thumbnail" name="news[thumbnail]" type="file" tabindex="2" required>
+                <label for="news_thumbnail" class="item-image-preview-container">
+                    Thumbnail image (130x100):
+                    {% if (item) %}
+                        <img src="{{ item.thumbnail }}" alt="{{ item.title }}" width="40">
+                    {% endif %}
+                </label>
+                <input id="news_thumbnail" name="news[thumbnail]" type="file" tabindex="2">
 
-                <label for="news_image">Main image (800xN):</label>
-                <input id="news_image" name="news[image]" type="file" tabindex="3" required>
+                <label for="news_image" class="item-image-preview-container">
+                    Main image (800xN):
+                    {% if (item) %}
+                        <img src="{{ item.image }}" alt="{{ item.title }}" width="40">
+                    {% endif %}
+                </label>
+                <input id="news_image" name="news[image]" type="file" tabindex="3">
 
                 <label for="news_url">URL:</label>
-                <input id="news_url" name="news[url]" type="text" tabindex="4" required>
+                <input id="news_url" name="news[url]" type="text" value="{{ item ? item.url : '' }}" tabindex="4" required>
 
                 <label for="news_text">Text:</label>
-                <textarea id="news_text" name="news[text]" tabindex="5" required></textarea>
+                <textarea id="news_text" name="news[text]" tabindex="5" required>{{ item ? item.text : '' }}</textarea>
 
-                <button type="submit" tabindex="6" class="button-component">create</button>
+                <button type="submit" tabindex="6" class="button-component">{{ item ? 'edit' : 'create' }}</button>
             </form>
         </section>
     </div>
@@ -80,20 +98,24 @@
         document.getElementById('news_form').addEventListener('submit', function(event){
             event.preventDefault();
 
-            fetch('/news', {
-                body: new FormData(event.target),
-                cache: 'no-store',
-                method: 'POST'
-            }).then(function(response){
-                if (response.status !== 200) {
-                    alert(response.statusText);
-                    return;
-                }
+            {% if (item) %}
+                alert('call edit handler'); //TODO: implement!
+            {% else %}
+                fetch('/news', {
+                    body: new FormData(event.target),
+                    cache: 'no-store',
+                    method: 'POST'
+                }).then(function(response){
+                    if (response.status !== 200) {
+                        alert(response.statusText);
+                        return;
+                    }
 
-                location.href = '{{ path('get_all_news') }}';
-            }).catch(function(error){
-                alert(error);
-            });
+                    location.href = '{{ path('get_all_news') }}';
+                }).catch(function(error){
+                    alert(error);
+                });
+            {% endif %}
         });
     </script>
 {% endblock %}
