@@ -2,8 +2,9 @@
 
 {% block stylesheets %}
     <style type="text/css">
-        .news__header a {
-            color: #313131;
+        .news__header_edit-link {
+            position: absolute;
+            right: 0;
         }
         .news__item_date-created {
             color: #C9C9C9;
@@ -29,6 +30,7 @@
     <div class="news">
         <header class="news__header">
             <a class="news__header_homepage-link" href="{{ path('get_all_news') }}">Back to list</a>
+            <a class="news__header_edit-link" href="{{ path('news_form_edit', {'id': item.id}) }}">Edit item</a>
         </header>
         <section class="news__item">
             <div class="news__item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</div>

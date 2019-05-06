@@ -29,9 +29,6 @@
             grid-row-start: 1;
             grid-row-end: span 2;
         }
-        .news__list-item_edit-button {
-            margin-bottom: 5px;
-        }
     </style>
 {% endblock %}
 
@@ -39,7 +36,7 @@
     <div class="news">
         <header class="news__header">
             <span class="news__header_title">News list</span>
-            <a class="news__header_create-link" href="{{ path('news_form') }}">Create new</a>
+            <a class="news__header_create-link" href="{{ path('news_form_create') }}">Create new</a>
         </header>
         {% for item in items %}
             <section class="news__list-item">
@@ -49,8 +46,7 @@
                 <span class="news__list-item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</span>
                 <span class="news__list-item_title"><a href="/news/{{ item.id }}">{{ item.title }}</a></span>
                 <span class="news__list-item_buttons-pane">
-                    <button class="news__list-item_edit-button" data-id="{{ item.id }}">edit item</button>
-                    <button class="news__list-item_delete-button" data-id="{{ item.id }}">delete item</button>
+                    <button class="news__list-item_delete-button button-component" data-id="{{ item.id }}">delete item</button>
                 </span>
             </section>
         {% endfor %}

@@ -30,7 +30,8 @@ class DefaultController extends AbstractController {
     }
 
     /**
-     * @Route("/form", name="news_form")
+     * @Route("/form", name="news_form_create")
+     * @Route("/form/{id<\d+>}", name="news_form_edit")
      */
     public function newsForm() {
         return $this->render('default/form.html.twig');
