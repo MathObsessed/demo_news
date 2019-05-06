@@ -25,9 +25,12 @@
             font-size: 28px;
             grid-row-start: 2;
         }
-        .news__list-item_delete-button {
+        .news__list-item_buttons-pane {
             grid-row-start: 1;
             grid-row-end: span 2;
+        }
+        .news__list-item_edit-button {
+            margin-bottom: 5px;
         }
     </style>
 {% endblock %}
@@ -45,7 +48,10 @@
                 </picture>
                 <span class="news__list-item_date-created">{{ item.created | date('Y-m-d H:i:s') }}</span>
                 <span class="news__list-item_title"><a href="/news/{{ item.id }}">{{ item.title }}</a></span>
-                <button class="news__list-item_delete-button" data-id="{{ item.id }}">delete item</button>
+                <span class="news__list-item_buttons-pane">
+                    <button class="news__list-item_edit-button" data-id="{{ item.id }}">edit item</button>
+                    <button class="news__list-item_delete-button" data-id="{{ item.id }}">delete item</button>
+                </span>
             </section>
         {% endfor %}
     </div>
