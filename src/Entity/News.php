@@ -23,7 +23,6 @@ class News {
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank
      */
     private $created;
 
@@ -47,14 +46,12 @@ class News {
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      * @Assert\Image(minWidth = 130, maxWidth = 130, minHeight = 100, maxHeight = 100)
      */
     private $thumbnail;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      * @Assert\Image(minWidth = 800, maxWidth = 800)
      */
     private $image;
@@ -75,11 +72,11 @@ class News {
         return $this->id;
     }
 
-    public function getCreated():?\DateTimeInterface {
+    public function getCreated() {
         return $this->created;
     }
 
-    public function setCreated(\DateTimeInterface $created):self {
+    public function setCreated($created):self {
         $this->created = $created;
 
         return $this;
@@ -95,21 +92,21 @@ class News {
         return $this;
     }
 
-    public function getThumbnail():?string {
+    public function getThumbnail() {
         return $this->thumbnail;
     }
 
-    public function setThumbnail(string $thumbnail):self {
+    public function setThumbnail($thumbnail):self {
         $this->thumbnail = $thumbnail;
 
         return $this;
     }
 
-    public function getImage():?string {
+    public function getImage() {
         return $this->image;
     }
 
-    public function setImage(string $image):self {
+    public function setImage($image):self {
         $this->image = $image;
 
         return $this;

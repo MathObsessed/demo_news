@@ -9,39 +9,22 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NewsType extends AbstractType {
-    const CREATED = 'created';
     const THUMBNAIL = 'thumbnail';
     const IMAGE = 'image';
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $created = $options[self::CREATED];
-
         $builder
-            ->add(self::CREATED, TextType::class)
             ->add('title', TextType::class)
             ->add(self::THUMBNAIL, FileType::class)
             ->add(self::IMAGE, FileType::class)
             ->add('url', UrlType::class)
-            ->add('text', TextareaType::class)
-            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($created) {
-                $requestData = $event->getData();
-
-                if (!isset($requestData[self::CREATED])) {
-                    $requestData[self::CREATED] = $created;
-
-                    $event->setData($requestData);
-                }
-            });
+            ->add('text', TextareaType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setRequired(self::CREATED);
-
         $resolver->setDefaults([
             'data_class' => News::class
         ]);
