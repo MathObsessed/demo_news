@@ -70,7 +70,7 @@ class DefaultController extends AbstractController {
     }
 
     /**
-     * @Route("/assets/{fileName}", name="fetch_asset")
+     * @Route("/images/{fileName}", name="fetch_asset")
      */
     public function fetchAsset($fileName) {
         BinaryFileResponse::trustXSendfileTypeHeader();
