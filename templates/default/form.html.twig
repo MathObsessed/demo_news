@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+    {{ parent() }}
+
     <style type="text/css">
         form {
             font-size: 14px;
@@ -94,6 +96,8 @@
 {% endblock %}
 
 {% block javascripts %}
+    {{ parent() }}
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function(){
             Array.from(document.getElementsByClassName('upload-form-element')).forEach(function(element){
