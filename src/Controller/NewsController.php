@@ -147,10 +147,10 @@ class NewsController extends AbstractFOSRestController implements ClassResourceI
     }
 
     private function handleFileUpload($data) {
-        $this->assetService->handleUpload($data);
+        return $this->assetService->handleUpload($data);
     }
 
     private function fileByName($fileName) {
-        $this->assetService->fileByName($fileName);
+        return $this->assetService->fileByName($fileName);
     }
 }
