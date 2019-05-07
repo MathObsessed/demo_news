@@ -109,12 +109,12 @@
             document.getElementById('news_form').addEventListener('submit', function(event){
                 event.preventDefault();
 
-                fetch('/news{{ item ? '/' ~ item.id : '' }}', {
+                fetch('/api/news/{{ item ? item.id : '' }}', {
                     body: new FormData(event.target),
                     cache: 'no-store',
                     method: 'POST'
                 }).then(function(response){
-                    if (response.status !== 200) {
+                    if (response.status !== 204) {
                         alert(response.statusText);
                         return;
                     }

@@ -61,11 +61,11 @@
                     let clickedItemId = event.target.getAttribute('data-id');
 
                     if (confirm('You are about to delete the news with ID = ' + clickedItemId)) {
-                        fetch('/news/' + clickedItemId, {
+                        fetch('/api/news/' + clickedItemId, {
                             cache: 'no-store',
                             method: 'DELETE'
                         }).then(function(response){
-                            if (response.status !== 200) {
+                            if (response.status !== 204) {
                                 alert(response.statusText);
                                 return;
                             }
