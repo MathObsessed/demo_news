@@ -4,7 +4,7 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
 
-    .addEntry('app', './assets/js/app.js')
+    .addEntry('app', './assets/app.js')
 
     .splitEntryChunks()
 
@@ -13,9 +13,6 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
 
-    .configureBabel(() => {}, {
-        useBuiltIns: 'usage',
-        corejs: 3
-    });
+    .enableVueLoader();
 
 module.exports = Encore.getWebpackConfig();

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class AssetService {
-    private const DIRECTORY = '/images';
+    const DIRECTORY = '/images';
 
     private $projectRootDirectory;
 

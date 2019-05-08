@@ -4,12 +4,39 @@
         <meta charset="UTF-8">
         <title>{% block title %}Demo News{% endblock %}</title>
         {% block stylesheets %}
+            <style type="text/css">
+                * {
+                    color: #313131;
+                    font-family: sans-serif;
+                }
+                .button-component {
+                    background-color: #C9C9C9;
+                    border: none;
+                    border-radius: 3px;
+                    color: white;
+                    cursor: pointer;
+                    min-width: 120px;
+                    padding: 15px 20px;
+                }
+                .button-component:hover {
+                    opacity: 0.8;
+                }
+                .button-component:active {
+                    opacity: 0.4;
+                }
+            </style>
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
         {% block javascripts %}
+            <script type="text/javascript">
+                const APP_CONFIG = {
+                    imagePrefix: '{{ imagePrefix }}',
+                    apiEndpoint: '{{ path('api_news_cget') }}'
+                };
+            </script>
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </body>

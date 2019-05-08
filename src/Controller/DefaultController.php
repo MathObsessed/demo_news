@@ -47,6 +47,7 @@ class DefaultController extends AbstractController {
         $items = $this->newsService->findAll();
 
         return $this->render('default/index.html.twig', [
+            'imagePrefix' => AssetService::DIRECTORY.DIRECTORY_SEPARATOR,
             'items' => $items
         ]);
     }
