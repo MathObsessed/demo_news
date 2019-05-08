@@ -27,13 +27,6 @@ class NewsController extends AbstractFOSRestController implements ClassResourceI
     }
 
     /**
-     * @Route("/ping", methods={"GET"}, name="api_news_healthcheck")
-     */
-    public function pingAction() {
-        return $this->view('pong', Response::HTTP_OK);
-    }
-
-    /**
      * @Route("/", methods={"GET"}, name="api_news_cget")
      */
     public function cgetAction() {

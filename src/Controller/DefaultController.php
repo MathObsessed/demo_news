@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Exception\NewsNotFound;
 use App\Service\AssetService;
 use App\Service\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,56 +20,7 @@ class DefaultController extends AbstractController {
     }
 
     /**
-     * @Route("/", name="homepage")
-     * @Route("/news", methods={"GET"}, name="get_all_news")
-     */
-    public function index() {
-        $items = $this->newsService->findAll();
-
-        return $this->render('default/index.html.twig', [
-            'items' => $items
-        ]);
-    }
-
-    /**
-     * @Route("/form", name="news_form_create")
-     * @Route("/form/{id<\d+>}", name="news_form_edit")
-     */
-    public function newsForm($id = '') {
-        $item = null;
-
-        if (!empty($id)) {
-            try {
-                $item = $this->newsService->findById($id);
-            }
-            catch (NewsNotFound $e) {
-                throw $this->createNotFoundException($e->getMessage());
-            }
-        }
-
-        return $this->render('default/form.html.twig', [
-            'item' => $item
-        ]);
-    }
-
-    /**
-     * @Route("/news/{id<\d+>}", methods={"GET"}, name="get_news_by_id")
-     */
-    public function newsGet($id) {
-        try {
-            $item = $this->newsService->findById($id);
-        }
-        catch (NewsNotFound $e) {
-            throw $this->createNotFoundException($e->getMessage());
-        }
-
-        return $this->render('default/item.html.twig', [
-            'item' => $item
-        ]);
-    }
-
-    /**
-     * @Route("/images/{fileName}", name="fetch_asset")
+     * @Route("/images/{fileName}", name="fetch_images")
      */
     public function fetchAsset($fileName) {
         BinaryFileResponse::trustXSendfileTypeHeader();
@@ -87,5 +37,17 @@ class DefaultController extends AbstractController {
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $fileName));
 
         return $response;
+    }
+
+    /**
+     * @Route("/", name="homepage")
+     * @Route("/{route}", name="vue_router", requirements={"route"="^(?!.*images|_wdt|_profiler).+"})
+     */
+    public function index() {
+        $items = $this->newsService->findAll();
+
+        return $this->render('default/index.html.twig', [
+            'items' => $items
+        ]);
     }
 }
