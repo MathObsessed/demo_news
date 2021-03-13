@@ -16,11 +16,11 @@
         "symfony/console": "^4.3",
         "symfony/dotenv": "^4.3",
         "symfony/flex": "^1.1",
-        "symfony/form": "4.2.*",
-        "symfony/framework-bundle": "4.2.*",
+        "symfony/form": "^4.3",
+        "symfony/framework-bundle": "^4.3",
         "symfony/monolog-bundle": "^3.0",
         "symfony/serializer": "^4.3",
-        "symfony/twig-bundle": "4.2.*",
+        "symfony/twig-bundle": "^4.3",
         "symfony/validator": "^4.3",
         "symfony/webpack-encore-bundle": "^1.5",
         "symfony/yaml": "^4.3"
@@ -28,10 +28,11 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.1",
         "easycorp/easy-log-handler": "^1.0.7",
-        "symfony/debug-bundle": "*",
+        "symfony/debug-bundle": "^4.3",
         "symfony/maker-bundle": "^1.11",
-        "symfony/profiler-pack": "*",
-        "symfony/var-dumper": "*"
+        "symfony/stopwatch": "^4.3",
+        "symfony/var-dumper": "^4.3",
+        "symfony/web-profiler-bundle": "^4.3"
     },
     "config": {
         "preferred-install": {
